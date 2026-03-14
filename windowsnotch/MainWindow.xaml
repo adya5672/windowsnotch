@@ -1,0 +1,84 @@
+﻿<Window x:Class="windowsnotch.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize">
+
+    <Grid>
+        <Border
+            Background="#E6000000"
+            CornerRadius="16"
+            Padding="10"
+            MouseLeftButtonDown="Window_MouseLeftButtonDown">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Album art -->
+                <Border
+                    
+                    Grid.Column="0"
+                    Width="50"
+                    Height="50"
+                    CornerRadius="8"
+                    Background="#333"
+                    VerticalAlignment="Center">
+                    <Image x:Name="AlbumArtImage"
+                           Stretch="UniformToFill"/>
+                </Border>
+                <!-- Text -->
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="10,0"
+                    VerticalAlignment="Center">
+
+                    <TextBlock
+                        x:Name="SongTitleText"
+                        Text="Song Title"
+                        Foreground="White"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        TextTrimming="CharacterEllipsis"/>
+
+                    <TextBlock
+                        x:Name="ArtistText"
+                        Text="Artist Name"
+                        Foreground="#AAAAAA"
+                        FontSize="12"
+                        TextTrimming="CharacterEllipsis"/>
+
+                </StackPanel>
+
+                <!-- Waveform container (empty for now) -->
+                <Grid
+                Grid.Column="2"
+                 VerticalAlignment="Center"
+                 HorizontalAlignment="Stretch">
+
+                    <StackPanel
+                      Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center">
+                        <Border x:Name="Bar1" Width="4" Height="10" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
+                        <Border x:Name="Bar2" Width="4" Height="16" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
+                        <Border x:Name="Bar3" Width="4" Height="13" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
+                        <Border x:Name="Bar4" Width="4" Height="18" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
+                        <Border x:Name="Bar5" Width="4" Height="12" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
+                    </StackPanel>
+                </Grid>
+
+
+            </Grid>
+
+        </Border>
+    </Grid>
+
+</Window>
