@@ -17,6 +17,16 @@ namespace windowsnotch
         double[] weights = {0.6,0.8,1.0,0.8,0.6 };
         double[] maxHeights= {14,18,24,18,14 };
         double[] heights;
+        double[,] waveformPattern =
+        {
+            {8, 14, 20, 14, 8},
+            {10, 18, 24, 18, 10},
+            {12, 20, 28, 20, 12},
+            {10, 18, 24, 18, 10},
+            {8, 14, 20, 14, 8}
+        };
+        int patternIndex=0;
+        double phase = 0;
         Random random = new Random();
         DispatcherTimer timer = new DispatcherTimer();
         DispatcherTimer collapseTimer = new DispatcherTimer();
@@ -64,7 +74,7 @@ namespace windowsnotch
                 heights[i] = bars[i].Height;
             }
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(90);
+            timer.Interval = TimeSpan.FromMilliseconds(40);
             timer.Tick += UpdateWaveform;
             mediaManager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
             currentSession = mediaManager.GetCurrentSession();
@@ -140,15 +150,28 @@ namespace windowsnotch
             {
                 return;
             }
-            int baseHeight = random.Next(8, 22);
+            var playback = currentSession.GetPlaybackInfo();
+            if(playback.PlaybackStatus != GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing)
+            {
+                // fade bars down when paused
+                for(int i = 0; i < bars.Length; i++)
+                {
+                    heights[i] = heights[i] + (6 - heights[i]) * 0.25;
+                    bars[i].Height = heights[i];
+                }
+                return;
+            }
+            phase += 0.18;// animation speed
             for(int i=0; i < bars.Length; i++)
             {
-                double height = baseHeight * weights[i];
-                height += random.Next(-3, 4);
-                height = Math.Clamp(height, 8, maxHeights[i]);
-                heights[i] = heights[i] + (height - heights[i]) * 0.25;
+                double wave = Math.Sin(phase + i * 0.6);
+                double targetHeight = (wave + 1) * 10 + 6;
+                heights[i] = heights[i] + (targetHeight - heights[i]) * 0.35;
                 bars[i].Height = heights[i];
             }
+            patternIndex++;
+            if (patternIndex >= waveformPattern.GetLength(0))
+                patternIndex = 0;
         }
     }
 }
