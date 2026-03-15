@@ -32,12 +32,18 @@ namespace windowsnotch
         DispatcherTimer collapseTimer = new DispatcherTimer();
         GlobalSystemMediaTransportControlsSessionManager mediaManager;
         GlobalSystemMediaTransportControlsSession currentSession;
+
+
+
         public MainWindow()
         {
             InitializeComponent();
             GetMediaInfo();
             Loaded += MainWindow_Loaded;
         }
+
+
+
         private async void GetMediaInfo()
         {
             mediaManager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
@@ -52,13 +58,18 @@ namespace windowsnotch
             }
             else
             {
-                MessageBox.Show("No media sessions found.");
+                SongTitleText.Text = "Nothing Playing";
+                ArtistText.Text = "Open Spotify or Another media app";
+                AlbumArtImage.Source = null;
             }
         }
+
+
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
         }
+
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -76,9 +87,16 @@ namespace windowsnotch
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(40);
             timer.Tick += UpdateWaveform;
+
             mediaManager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
+            mediaManager.CurrentSessionChanged += MediaManager_CurrentSessionChanged;
             currentSession = mediaManager.GetCurrentSession();
-            currentSession.MediaPropertiesChanged += CurrentSession_MediaPropertiesChanged;
+
+
+            if (currentSession != null)
+            {
+                currentSession.MediaPropertiesChanged += CurrentSession_MediaPropertiesChanged;
+            }
             collapseTimer.Interval = TimeSpan.FromSeconds(4);
             collapseTimer.Tick += (s, e) =>
             {
@@ -87,18 +105,45 @@ namespace windowsnotch
             };
             timer.Start();
         }
+
+        private async void MediaManager_CurrentSessionChanged(GlobalSystemMediaTransportControlsSessionManager sender, CurrentSessionChangedEventArgs args)
+        {
+            currentSession = sender.GetCurrentSession();
+            if(currentSession==null)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    SongTitleText.Text = "Nothing Playing";
+                    ArtistText.Text = "";
+                    AlbumArtImage.Source = null;
+                });
+                return;
+            }
+            var mediaProperties = await currentSession.TryGetMediaPropertiesAsync();
+            Dispatcher.Invoke(() =>
+            {
+                SongTitleText.Text = mediaProperties.Title;
+                ArtistText.Text = mediaProperties.Artist;
+            });
+            await LoadAlbumArt(mediaProperties);
+            currentSession.MediaPropertiesChanged += CurrentSession_MediaPropertiesChanged;
+        }
         private void Widget_MouseEnter(object sender, MouseEventArgs e)
         {
             ExpandWidget();
             FadeElement(WaveformBars, 0);// hide waveform
             FadeElement(PlaybackControls, 1);//Show controls
         }
+
+
         private void Widget_MouseLeave(object sender, MouseEventArgs e)
         {
             CollapseWidget();
             FadeElement(WaveformBars, 1);// show waveform
             FadeElement(PlaybackControls, 0);// hide controls
         }
+
+
         private void FadeElement(UIElement element, double targetopacity)
         {
             DoubleAnimation fade = new DoubleAnimation
@@ -108,6 +153,8 @@ namespace windowsnotch
             };
             element.BeginAnimation(UIElement.OpacityProperty, fade);
         }
+
+
         private async void CurrentSession_MediaPropertiesChanged(GlobalSystemMediaTransportControlsSession sender, MediaPropertiesChangedEventArgs args)
         {
             var mediaProperties = await sender.TryGetMediaPropertiesAsync();
@@ -123,6 +170,8 @@ namespace windowsnotch
             });
             await LoadAlbumArt(mediaProperties);
         }
+
+
         private void ExpandWidget()
         {
             DoubleAnimation widthAnim = new DoubleAnimation
@@ -134,6 +183,8 @@ namespace windowsnotch
             };
             BeginAnimation(Window.WidthProperty, widthAnim);
         }
+
+
         private void CollapseWidget()
         {
             DoubleAnimation widthAnim= new DoubleAnimation
@@ -145,6 +196,8 @@ namespace windowsnotch
             };
             BeginAnimation(Window.WidthProperty, widthAnim);
         }
+
+
         private async Task LoadAlbumArt(GlobalSystemMediaTransportControlsSessionMediaProperties mediaProperties)
         {
             var thumbnail = mediaProperties.Thumbnail;
@@ -166,9 +219,12 @@ namespace windowsnotch
                 });
             }
         }
+
+
         void UpdateWaveform(object sender,EventArgs e) {
             if(currentSession==null)
             {
+                SongTitleText.Text = "Nothing Playing";
                 return;
             }
             var playback = currentSession.GetPlaybackInfo();
@@ -180,6 +236,7 @@ namespace windowsnotch
                     heights[i] = heights[i] + (6 - heights[i]) * 0.25;
                     bars[i].Height = heights[i];
                 }
+                FadeElement(WaveformBars, 0.4);
                 return;
             }
             phase += 0.18;// animation speed
@@ -194,6 +251,8 @@ namespace windowsnotch
             if (patternIndex >= waveformPattern.GetLength(0))
                 patternIndex = 0;
         }
+
+
         private async void PlayPause_Click(object sender, RoutedEventArgs e)
         {
             if (currentSession == null)
@@ -205,17 +264,21 @@ namespace windowsnotch
             }
             else
             {
-                await currentSession.TryPauseAsync();
+                await currentSession.TryPlayAsync();
             }
         }
+
+
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
-            if (currentSession==null)
+            if (currentSession==null)   
             {
                 return;
             }
             await currentSession.TrySkipNextAsync();
         }
+
+
         private async void Prev_Click(object sender, RoutedEventArgs e)
         {
             if (currentSession == null)
