@@ -75,23 +75,33 @@
                         VerticalAlignment="Center"
                         Opacity="0">
 
-                        <Button Content="⏮"
+                        <Button 
                                 Width="28"
                                 Height="28"
                                 Click="Prev_Click"
-                                Margin="2"/>
+                                Margin="2"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="16"
+                                Content="&#xE892;"/>
 
-                        <Button Content="⏯"
+                        <Button 
                                 Width="28"
                                 Height="28"
                                 Click="PlayPause_Click"
-                                Margin="2"/>
+                                Margin="2"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="16"
+                                Content="&#xE768;"/>
+                        
 
-                        <Button Content="⏭"
+                        <Button 
                                 Width="28"
                                 Height="28"
                                 Click="Next_Click"
-                                Margin="2"/>
+                                Margin="2"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="16"
+                                Content="&#xE893;"/>
 
                     </StackPanel>
 
