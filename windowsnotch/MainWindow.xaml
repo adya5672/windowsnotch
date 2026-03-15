@@ -8,6 +8,41 @@
         ShowInTaskbar="False"
         ResizeMode="NoResize">
 
+    <Window.Resources>
+        <Style x:Key="IconButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#AAAAAA"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse x:Name="Bg" Fill="Transparent"/>
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Fill" Value="#33FFFFFF"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bg" Property="Fill" Value="#55FFFFFF"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Border
             Background="#E6000000"
@@ -21,7 +56,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Album art -->
@@ -32,10 +67,7 @@
                     CornerRadius="8"
                     Background="#333"
                     VerticalAlignment="Center">
-
-                    <Image x:Name="AlbumArtImage"
-                           Stretch="UniformToFill"/>
-
+                    <Image x:Name="AlbumArtImage" Stretch="UniformToFill"/>
                 </Border>
 
                 <!-- Text -->
@@ -43,7 +75,6 @@
                     Grid.Column="1"
                     Margin="10,0"
                     VerticalAlignment="Center">
-
                     <TextBlock
                         x:Name="SongTitleText"
                         Text="Song Title"
@@ -51,73 +82,63 @@
                         FontSize="14"
                         FontWeight="SemiBold"
                         TextTrimming="CharacterEllipsis"/>
-
                     <TextBlock
                         x:Name="ArtistText"
                         Text="Artist Name"
                         Foreground="#AAAAAA"
                         FontSize="12"
                         TextTrimming="CharacterEllipsis"/>
-
                 </StackPanel>
 
                 <!-- Right side container -->
                 <Grid
                     Grid.Column="2"
+                    Width="104"
+                    Height="36"
                     VerticalAlignment="Center"
-                    HorizontalAlignment="Stretch">
+                    HorizontalAlignment="Right">
 
-                    <!-- Playback Controls -->
-                    <StackPanel
-                        x:Name="PlaybackControls"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Opacity="0">
-
-                        <Button 
-                                Width="28"
-                                Height="28"
-                                Click="Prev_Click"
-                                Margin="2"
-                                FontFamily="Segoe MDL2 Assets"
-                                FontSize="16"
-                                Content="&#xE892;"/>
-
-                        <Button 
-                                Width="28"
-                                Height="28"
-                                Click="PlayPause_Click"
-                                Margin="2"
-                                FontFamily="Segoe MDL2 Assets"
-                                FontSize="16"
-                                Content="&#xE768;"/>
-                        
-
-                        <Button 
-                                Width="28"
-                                Height="28"
-                                Click="Next_Click"
-                                Margin="2"
-                                FontFamily="Segoe MDL2 Assets"
-                                FontSize="16"
-                                Content="&#xE893;"/>
-
-                    </StackPanel>
-
-                    <!-- Waveform -->
+                    <!-- Waveform — behind, not hit testable -->
                     <StackPanel
                         x:Name="WaveformBars"
                         Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center">
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsHitTestVisible="False"
+                        Opacity="1">
+                        <Border x:Name="Bar1" Width="4" Height="10" CornerRadius="2" Background="#AAAAAA" Margin="2,0" VerticalAlignment="Center"/>
+                        <Border x:Name="Bar2" Width="4" Height="16" CornerRadius="2" Background="#AAAAAA" Margin="2,0" VerticalAlignment="Center"/>
+                        <Border x:Name="Bar3" Width="4" Height="13" CornerRadius="2" Background="#AAAAAA" Margin="2,0" VerticalAlignment="Center"/>
+                        <Border x:Name="Bar4" Width="4" Height="18" CornerRadius="2" Background="#AAAAAA" Margin="2,0" VerticalAlignment="Center"/>
+                        <Border x:Name="Bar5" Width="4" Height="12" CornerRadius="2" Background="#AAAAAA" Margin="2,0" VerticalAlignment="Center"/>
+                    </StackPanel>
 
-                        <Border x:Name="Bar1" Width="4" Height="10" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
-                        <Border x:Name="Bar2" Width="4" Height="16" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
-                        <Border x:Name="Bar3" Width="4" Height="13" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
-                        <Border x:Name="Bar4" Width="4" Height="18" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
-                        <Border x:Name="Bar5" Width="4" Height="12" CornerRadius="2" Background="#AAAAAA" Margin="2,0"/>
-
+                    <!-- Playback Controls — on top -->
+                    <StackPanel
+                        x:Name="PlaybackControls"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Opacity="0">
+                        <Button
+                            Style="{StaticResource IconButton}"
+                            Click="Prev_Click"
+                            Content="&#xE892;"
+                            ToolTip="Previous"/>
+                        <Button
+                            Style="{StaticResource IconButton}"
+                            Click="PlayPause_Click"
+                            Content="&#xE768;"
+                            Width="32"
+                            Height="32"
+                            FontSize="15"
+                            Foreground="White"
+                            ToolTip="Play / Pause"/>
+                        <Button
+                            Style="{StaticResource IconButton}"
+                            Click="Next_Click"
+                            Content="&#xE893;"
+                            ToolTip="Next"/>
                     </StackPanel>
 
                 </Grid>
