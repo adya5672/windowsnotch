@@ -196,7 +196,7 @@ namespace windowsnotch
         }
         private async void PlayPause_Click(object sender, RoutedEventArgs e)
         {
-            if (currentSession = null)
+            if (currentSession == null)
                 return;
             var playbackInfo = currentSession.GetPlaybackInfo();
             if(playbackInfo.PlaybackStatus==GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing)
