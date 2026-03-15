@@ -87,6 +87,27 @@ namespace windowsnotch
             };
             timer.Start();
         }
+        private void Widget_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ExpandWidget();
+            FadeElement(WaveformBars, 0);// hide waveform
+            FadeElement(PlaybackControls, 1);//Show controls
+        }
+        private void Widget_MouseLeave(object sender, MouseEventArgs e)
+        {
+            CollapseWidget();
+            FadeElement(WaveformBars, 1);// show waveform
+            FadeElement(PlaybackControls, 0);// hide controls
+        }
+        private void FadeElement(UIElement element, double targetopacity)
+        {
+            DoubleAnimation fade = new DoubleAnimation
+            {
+                To = targetopacity,
+                Duration = TimeSpan.FromMilliseconds(200)
+            };
+            element.BeginAnimation(UIElement.OpacityProperty, fade);
+        }
         private async void CurrentSession_MediaPropertiesChanged(GlobalSystemMediaTransportControlsSession sender, MediaPropertiesChangedEventArgs args)
         {
             var mediaProperties = await sender.TryGetMediaPropertiesAsync();
@@ -172,6 +193,34 @@ namespace windowsnotch
             patternIndex++;
             if (patternIndex >= waveformPattern.GetLength(0))
                 patternIndex = 0;
+        }
+        private async void PlayPause_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentSession = null)
+                return;
+            var playbackInfo = currentSession.GetPlaybackInfo();
+            if(playbackInfo.PlaybackStatus==GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing)
+            {
+                await currentSession.TryPauseAsync();
+            }
+            else
+            {
+                await currentSession.TryPauseAsync();
+            }
+        }
+        private async void Next_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentSession==null)
+            {
+                return;
+            }
+            await currentSession.TrySkipNextAsync();
+        }
+        private async void Prev_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentSession == null)
+                return;
+            await currentSession.TrySkipPreviousAsync();
         }
     }
 }
