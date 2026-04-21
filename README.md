@@ -2,7 +2,7 @@
 
 A lightweight, transparent music widget for Windows that floats at the top of your screen — inspired by the Dynamic Island on iPhone. Displays your currently playing track with a live waveform visualizer.
 
-![Demo](screenshots/demo.gif)
+![Demo](demo.gif)
 
 ---
 
@@ -26,8 +26,8 @@ Head to the [Releases](../../releases) section and download the latest `windowsn
 
 ## Screenshots
 
-![Preview 1](screenshots/preview1.png)
-![Preview 2](screenshots/preview2.png)
+![Preview 1](preview1.png)
+![Preview 2](preview2.png)
 
 ---
 
